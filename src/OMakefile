@@ -1,5 +1,6 @@
 OHOCON_FILES[] =
 	typeSafeConfig
+        typeSafeConfigFactory
 
 .DEFAULT: $(OCamlLibrary libohocon, $(OHOCON_FILES))
 

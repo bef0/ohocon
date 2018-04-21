@@ -36,6 +36,15 @@ let server1 = { s_ports = [80; 8080;]; }
 
 let compare_list l1 l2 = List.for_all2 (=) l1 l2
 
+let test_get_config _ =
+  let config  = person_to_config person1 in
+  let config' = get_config config "person" in
+  assert_equal person1.p_name (get_string config' "name")
+
+let test_with_fallback _ =
+  let config = with_fallback (person_to_config person1) (server_to_config server1) in
+  assert_equal ~cmp:compare_list server1.s_ports (get_int_list config "server.ports")
+    
 let test_get_string _ =
   let config = person_to_config person1 in
   assert_equal person1.p_name (get_string config "person.name")
@@ -55,6 +64,8 @@ let test_get_int_list _ =
   assert_equal server1.s_ports (get_int_list config "server.ports")
 
 let suite = "suite" >::: [
+  "test_get_config" >:: test_get_config;
+  "test_with_fallback" >:: test_with_fallback;
   "test_get_string" >:: test_get_string;
   "test_get_int" >:: test_get_int;
   "test_get_string_list" >:: test_get_string_list;
