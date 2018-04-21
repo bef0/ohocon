@@ -1,17 +1,14 @@
-type value = 
+type value =
+  | HoconNull
   | HoconString of string
   | HoconInt of int
   | HoconStringList of string list
   | HoconIntList of int list
-
-and tree =
-  | Root of tree list
-  | Leaf of path * value
-  | Branch of path * tree list
+  | HoconObject of (path * value) list
 
 and path = string
   
-type t = tree
+type t = value list
   
 exception ConfigMissing of string
 
@@ -30,51 +27,54 @@ struct
     in List.rev (loop [] values)
 end
 
+let of_string s = HoconString s
+
+let of_int n = HoconInt n
+
+let of_int_list ns = HoconIntList ns
+
+let of_string_list ss = HoconStringList ss
+
+let of_tuples ts = HoconObject ts
+
 let parse_path_fragments path = String.split_on_char '.' path
 
 let compare_fragment p1 p2 = (String.compare p1 p2) = 0
 
-let get_config_opt root path =
-  let rec loop trees frags = match trees with
+let get_config_opt values path =
+  let rec find_first p = function
     | [] -> None
-    | Root(nodes) :: ts -> begin
-        match loop nodes frags with
-        | None -> loop ts frags
-        | Some t -> Some t
-      end
-    | t :: ts -> begin
+    | (p', x) :: _ when compare_fragment p p' -> Some x
+    | _ :: es -> find_first p es
+  and non_empty fs = List.length fs <> 0
+  and loop vs frags = match vs with
+    | [] -> None
+    | HoconObject(es) :: vs' -> begin
         match frags with
         | [] -> None
-        | p1 :: rest -> begin
-            match t with
-            | Leaf(p2, _) when compare_fragment p1 p2 -> Some t
-            | Branch(p2, nodes) when compare_fragment p1 p2 ->
-              if (List.length rest = 0) then Some (Root nodes) else Some t
-            | _ -> loop ts frags
+        | p1 :: ps -> begin
+            match find_first p1 es with
+            | Some x when non_empty ps -> loop [x] ps
+            | Some x -> Some [x]
+            | None -> loop vs' frags
           end
       end
-  in loop [root;] (parse_path_fragments path)
+    | v :: vs' -> if (non_empty frags) then loop vs' frags else Some [v]
+  in loop values (parse_path_fragments path)
 
 let get_config t path =
   match get_config_opt t path with
   | Some x -> x
   | None -> failwith "none"
 
-let with_fallback t1 t2 = Root [t1; t2]
+let with_fallback t1 t2 = List.append t1 t2
               
 let get_value_opt t path f =
-  let  iter = function
-    | Leaf(_, v) -> f v
-    | _ -> None
-  and hd_safe = function
-    | [] -> None
-    | v :: _ -> Some v
-  in
   match get_config_opt t path with
-  | Some(Leaf(_, v)) -> f v
-  | Some(Branch(_, ts)) -> hd_safe (Option.flatten (List.map iter ts))
-  | _ -> None
-
+  | Some([]) -> None
+  | Some(v :: _) -> f v
+  | None -> None
+    
 let get_string_opt t path =
   get_value_opt t path (function
     | HoconString x -> Some x

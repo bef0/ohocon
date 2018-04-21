@@ -1,6 +1,10 @@
+OCamlGeneratedFiles(parser.ml lexer.ml)
+
 OHOCON_FILES[] =
+	lexer
+	parser
 	typeSafeConfig
-        typeSafeConfigFactory
+	typeSafeConfigFactory
 
 .DEFAULT: $(OCamlLibrary libohocon, $(OHOCON_FILES))
 

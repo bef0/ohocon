@@ -8,9 +8,13 @@
 *.cma
 *.cmi
 *.cmt
+*.cmti
 *.cmo
 *.cmx
 *.cmxa
 *.opt
 *.byte
 *.run
+parser.ml
+parser.mli
+lexer.ml

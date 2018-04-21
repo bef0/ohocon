@@ -1,6 +1,9 @@
 open TypeSafeConfig
 open OUnit2
 
+module C = TypeSafeConfig
+module F = TypeSafeConfigFactory
+
 type person = {
   p_name   : string;
   p_age    : int;
@@ -11,21 +14,25 @@ type server = {
   s_ports : int list;
 }
 
-let person_to_config p = Branch(
-  "person",
-  [
-    Leaf("name", (HoconString p.p_name));
-    Leaf("age", (HoconInt p.p_age));
-    Leaf("emails", (HoconStringList p.p_emails));
-  ]
-)
+let person_to_config p = F.of_tuples([
+  ("person", C.of_tuples(
+     [
+       ("name", C.of_string p.p_name);
+       ("age", C.of_int p.p_age);
+       ("emails", (C.of_string_list p.p_emails));
+     ]
+   )
+  )
+])
 
-let server_to_config s = Branch(
-  "server",
-  [
-    Leaf("ports", (HoconIntList s.s_ports));
-  ]
-)
+let server_to_config s = F.of_tuples [
+  ("server", C.of_tuples(
+     [
+       ("ports", C.of_int_list s.s_ports);
+     ]
+   )
+  )
+]
 
 let person1 = {
   p_name = "john"; p_age = 30;
@@ -63,6 +70,16 @@ let test_get_int_list _ =
   let config = server_to_config server1 in
   assert_equal server1.s_ports (get_int_list config "server.ports")
 
+let test_from_string _ =
+  let config1 = TypeSafeConfigFactory.from_string "index=1" in
+  let config2 = TypeSafeConfigFactory.from_string "person.name=\"foo\"" in
+  let config3 = TypeSafeConfigFactory.from_string "person = { age: 18 }" in
+  begin
+    assert_equal 1 (get_int config1 "index");
+    assert_equal "foo" (get_string config2 "person.name");
+    assert_equal 18 (get_int config3 "person.age");
+  end
+
 let suite = "suite" >::: [
   "test_get_config" >:: test_get_config;
   "test_with_fallback" >:: test_with_fallback;
@@ -70,6 +87,7 @@ let suite = "suite" >::: [
   "test_get_int" >:: test_get_int;
   "test_get_string_list" >:: test_get_string_list;
   "test_get_int_list" >:: test_get_int_list;
+  "test_from_string" >:: test_from_string;
 ]
 
 let () = OUnit2.run_test_tt_main suite
