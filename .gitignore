@@ -1,0 +1,14 @@
+/_build
+*.byte
+*.native
+.omakedb*
+*.omc
+*o
+*.a
+*.cmi
+*.cmt
+*.cmo
+*.cmx
+*.cmxa
+*.opt
+*.byte

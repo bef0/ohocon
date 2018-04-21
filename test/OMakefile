@@ -1,0 +1,17 @@
+OCAML_LIBS += ../src/libohocon
+
+TEST_FILES[] =
+	main
+
+OCamlProgram(main, $(TEST_FILES))
+
+clean:
+	rm -f \
+		*.cmi \
+		*.cmt \
+		*.cmx \
+		*.cmo \
+		*.o \
+		*.opt \
+		*.byte \
+		main

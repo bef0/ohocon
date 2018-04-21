@@ -1,0 +1,14 @@
+OHOCON_FILES[] =
+	typeSafeConfig
+
+#.DEFAULT: $(OCamlLibrary ohocon, $(OHOCON_FILES))
+OCamlLibrary(libohocon, $(OHOCON_FILES))
+
+clean:
+	rm -f \
+		*.cmi \
+		*.cmt \
+		*.cmx \
+		*.cmo \
+		*.o \
+		libohocon.*
