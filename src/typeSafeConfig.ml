@@ -1,14 +1,8 @@
-type value =
-  | HoconNull
-  | HoconString of string
-  | HoconInt of int
-  | HoconStringList of string list
-  | HoconIntList of int list
-  | HoconObject of (path * value) list
+open Hocon
 
-and path = string
+type path = string
   
-type t = value list
+type t = Hocon.t list
   
 exception ConfigMissing of string
 
@@ -27,15 +21,7 @@ struct
     in List.rev (loop [] values)
 end
 
-let of_string s = HoconString s
-
-let of_int n = HoconInt n
-
-let of_int_list ns = HoconIntList ns
-
-let of_string_list ss = HoconStringList ss
-
-let of_tuples ts = HoconObject ts
+let of_value v = [v]
 
 let parse_path_fragments path = String.split_on_char '.' path
 

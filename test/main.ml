@@ -1,6 +1,6 @@
 open TypeSafeConfig
 open OUnit2
-
+module H = Hocon
 module C = TypeSafeConfig
 module F = TypeSafeConfigFactory
 
@@ -14,25 +14,25 @@ type server = {
   s_ports : int list;
 }
 
-let person_to_config p = F.of_tuples([
-  ("person", C.of_tuples(
+let person_to_config p = C.of_value(H.of_tuples [
+  ("person", H.of_tuples(
      [
-       ("name", C.of_string p.p_name);
-       ("age", C.of_int p.p_age);
-       ("emails", (C.of_string_list p.p_emails));
+       ("name", H.of_string p.p_name);
+       ("age", H.of_int p.p_age);
+       ("emails", (H.of_string_list p.p_emails));
      ]
    )
   )
 ])
 
-let server_to_config s = F.of_tuples [
-  ("server", C.of_tuples(
+let server_to_config s = C.of_value(H.of_tuples [
+  ("server", H.of_tuples(
      [
-       ("ports", C.of_int_list s.s_ports);
+       ("ports", H.of_int_list s.s_ports);
      ]
    )
   )
-]
+])
 
 let person1 = {
   p_name = "john"; p_age = 30;
@@ -71,9 +71,9 @@ let test_get_int_list _ =
   assert_equal server1.s_ports (get_int_list config "server.ports")
 
 let test_from_string _ =
-  let config1 = TypeSafeConfigFactory.from_string "index=1" in
-  let config2 = TypeSafeConfigFactory.from_string "person.name=\"foo\"" in
-  let config3 = TypeSafeConfigFactory.from_string "person = { age: 18 }" in
+  let config1 = TypeSafeConfigFactory.parse_string "index=1" in
+  let config2 = TypeSafeConfigFactory.parse_string "person.name=\"foo\"" in
+  let config3 = TypeSafeConfigFactory.parse_string "person = { age: 18 }" in
   begin
     assert_equal 1 (get_int config1 "index");
     assert_equal "foo" (get_string config2 "person.name");

@@ -3,6 +3,7 @@ OCamlGeneratedFiles(parser.ml lexer.ml)
 OHOCON_FILES[] =
 	lexer
 	parser
+	hocon
 	typeSafeConfig
 	typeSafeConfigFactory
 

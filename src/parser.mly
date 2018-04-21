@@ -1,9 +1,10 @@
 %{
-open TypeSafeConfig
+ module C = TypeSafeConfig
+open Hocon
 open Lexing
 
 let make_value frags value =
-  List.fold_right (fun p acc -> HoconObject([(p, acc)])) frags value
+  List.fold_right (fun p acc -> of_tuples [(p, acc)]) frags value
 %}
 
 %token TTRUE TFALSE
@@ -34,19 +35,19 @@ let make_value frags value =
 
 %%
 document:
-    |     { [] }
-    | obj { [$1] }
+    |     { C.of_value HoconNull }
+    | obj { C.of_value $1 }
         
 path:
     | TIDENT           { [ $1 ] }
     | path TDOT TIDENT { $1 @ [$3] }
 
 value:
-    | TDOLLAR TLBRACE TIDENT TRBRACE  { HoconString $3 }
-    | TINT                            { HoconInt $1 }
-    | TSTRING                         { HoconString $1 }
-    | TLBRACKET int_list TRBRACKET    { HoconIntList $2 }
-    | TLBRACKET string_list TRBRACKET { HoconStringList $2 }
+    | TDOLLAR TLBRACE TIDENT TRBRACE  { of_string $3 }
+    | TINT                            { of_int $1 }
+    | TSTRING                         { of_string $1 }
+    | TLBRACKET int_list TRBRACKET    { of_int_list $2 }
+    | TLBRACKET string_list TRBRACKET { of_string_list $2 }
     | TLBRACE obj TRBRACE             { $2 }
 
 obj:
