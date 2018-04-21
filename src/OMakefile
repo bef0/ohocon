@@ -1,8 +1,7 @@
 OHOCON_FILES[] =
 	typeSafeConfig
 
-#.DEFAULT: $(OCamlLibrary ohocon, $(OHOCON_FILES))
-OCamlLibrary(libohocon, $(OHOCON_FILES))
+.DEFAULT: $(OCamlLibrary libohocon, $(OHOCON_FILES))
 
 clean:
 	rm -f \

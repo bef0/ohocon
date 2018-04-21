@@ -5,6 +5,7 @@
 *.omc
 *o
 *.a
+*.cma
 *.cmi
 *.cmt
 *.cmo
@@ -12,3 +13,4 @@
 *.cmxa
 *.opt
 *.byte
+*.run

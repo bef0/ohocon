@@ -32,7 +32,6 @@
 #
 
 # .SUBDIRS:
-.SUBDIRS: $(dir src test)
 
 ########################################################################
 # C configuration.
@@ -103,7 +102,6 @@
 # Include path
 #
 # OCAMLINCLUDES +=
-USE_OCAMLFIND  = true
 
 #
 # Compile native or byte code? 
@@ -122,9 +120,6 @@ USE_OCAMLFIND  = true
 # OCAML_LINK_FLAGS +=
 # OCAML_BYTE_LINK_FLAGS +=
 # OCAML_NATIVE_LINK_FLAGS +=
-NATIVE_ENABLED = $(OCAMLOPT_EXISTS)
-BYTE_ENABLED   = $(not $(OCAMLOPT_EXISTS))
-OCAMLFLAGS    += -bin-annot -warn-error A
 
 ################################################
 # Generated files
@@ -161,6 +156,20 @@ OCAMLFLAGS    += -bin-annot -warn-error A
 # OCAML_LIB_FLAGS +=
 #
 # .DEFAULT: $(OCamlProgram $(PROGRAM), $(FILES))
+
+OCAMLFLAGS    += -bin-annot -warn-error A
+
+USE_OCAMLFIND  = true
+
+NATIVE_ENABLED = true
+
+BYTE_ENABLED = true
+
+.SUBDIRS: $(dir src test)
+
 OCAML_LIBS += src/libohocon
 
-.DEFAULT: test/main
+.DEFAULT: test/main$(EXE)
+
+test: test/main$(EXE)
+	test/main
