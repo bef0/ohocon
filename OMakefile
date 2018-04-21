@@ -172,4 +172,4 @@ OCAML_LIBS += src/libohocon
 .DEFAULT: test/main$(EXE)
 
 test: test/main$(EXE)
-	test/main
+	test/main -no-output-file -no-cache-filename

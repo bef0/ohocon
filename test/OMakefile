@@ -2,6 +2,9 @@ OCAMLINCLUDES += ../src
 
 OCAML_LIBS += ../src/libohocon
 
+OCAMLPACKS[] =
+	oUnit
+
 TEST_FILES[] =
 	main
 
