@@ -6,6 +6,13 @@ OCAMLPACKS[] =
 	oUnit
 
 TEST_FILES[] =
+	testTypes
+	getIntSuite
+	getBoolSuite
+	getStringSuite
+	getObjectSuite
+	typeSafeConfigSuite
+	typeSafeConfigFactorySuite
 	main
 
 .DEFAULT: $(OCamlProgram main, $(TEST_FILES))
