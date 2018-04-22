@@ -7,8 +7,9 @@ OCAMLPACKS[] =
 
 TEST_FILES[] =
 	testTypes
-	getIntSuite
 	getBoolSuite
+	getFloatSuite
+	getIntSuite
 	getStringSuite
 	getObjectSuite
 	typeSafeConfigSuite

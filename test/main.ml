@@ -2,8 +2,9 @@ open TypeSafeConfig
 open OUnit2
 
 let suite = "AllSuite" >::: [
-  GetIntSuite.suite;
   GetBoolSuite.suite;
+  GetFloatSuite.suite;
+  GetIntSuite.suite;
   GetStringSuite.suite;
   GetObjectSuite.suite;
   TypeSafeConfigSuite.suite;

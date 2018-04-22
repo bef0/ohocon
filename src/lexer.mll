@@ -13,8 +13,13 @@ let next_line lexbuf =
 let white = [' ' '\t']
 let newline = '\r' | '\n' | "\r\n" | '\t'
 let digit = ['0'-'9']
+let digits = digit+
+let digit1to9 = ['1'-'9']
 let ascii = ['a'-'z' 'A'-'Z' '0'-'9']
-let integer = '-'? digit digit*
+let integer = '-'? digit | '-'? digit1to9 digits
+let frac = '.' digits
+let exp = ['e' 'E'] ['+' '-']? digits
+let float = integer frac | integer exp | integer frac exp
 let ident = ascii+
 let nano   = "ns" | "nano" | "nanos" | "nanosecond" | "nanoseconds"
 let milli  = "ms" | "milli" | "millis" | "millisecond" | "milliseconds"
@@ -27,6 +32,7 @@ rule read = parse
     | white             { read lexbuf }
     | newline           { next_line lexbuf; read lexbuf }
     | integer           { TINT (int_of_string(Lexing.lexeme lexbuf)) }
+    | float             { TFLOAT (float_of_string (Lexing.lexeme lexbuf)) }
     | "true"            { TBOOL true }
     | "false"           { TBOOL false }
     | "null"            { TNULL }

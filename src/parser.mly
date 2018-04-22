@@ -18,6 +18,7 @@ let merge_values a =
 
 %token TSEMI TCOLON
 %token <bool> TBOOL
+%token <float> TFLOAT
 %token TCOMMA
 %token TDOT
 %token TDOLLAR
@@ -65,6 +66,7 @@ value:
     | TDOLLAR TLBRACE path_expr TRBRACE { $3 }
     | TBOOL                             { of_bool $1 }
     | TINT                              { of_int $1 }
+    | TFLOAT                            { of_float $1 }
     | TSTRING                           { of_string $1 }
     | TLBRACKET element_list TRBRACKET  { of_list $2 }
     | pair                              { $1 }

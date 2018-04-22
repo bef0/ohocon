@@ -18,12 +18,15 @@ type t =
   | HoconReference of path_expr
   | HoconString of string
   | HoconInt of int
+  | HoconFloat of float
   | HoconArray of t list
   | HoconObject of (path * t) list
 
 let null = HoconNull
 
 let of_bool b = HoconBool b
+
+let of_float n = HoconFloat n
 
 let of_path_expr e = HoconReference e
 

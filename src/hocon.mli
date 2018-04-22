@@ -18,12 +18,15 @@ type t =
   | HoconReference of path_expr
   | HoconString of string
   | HoconInt of int
+  | HoconFloat of float
   | HoconArray of t list
   | HoconObject of (path * t) list
 
 val null : t
 
 val of_bool : bool -> t
+
+val of_float : float -> t
 
 val of_path_expr : path_expr -> t
 

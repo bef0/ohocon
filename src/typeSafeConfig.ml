@@ -109,6 +109,17 @@ let get_bool t path =
   match get_bool_opt t path with
   | Some b -> b
   | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))
+
+let get_float_opt t path =
+  get_value_opt t path (function
+    | HoconFloat n -> Some n
+    | _ -> None
+  )
+
+let get_float t path =
+  match get_float_opt t path with
+  | Some n -> n
+  | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))
     
 let get_string_opt t path =
   get_value_opt t path (function

@@ -22,6 +22,10 @@ val get_bool : t -> path -> bool
 
 val get_bool_opt : t -> path -> bool option
 
+val get_float : t -> path -> float
+
+val get_float_opt : t -> path -> float option
+
 val get_config_opt : t -> path -> t option
 
 val get_config : t -> path -> t
