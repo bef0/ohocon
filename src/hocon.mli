@@ -11,7 +11,7 @@ type duration_unit =
   | Day
 
 type duration = int64 * duration_unit
-  
+
 type t =
   | HoconNull
   | HoconBool of bool

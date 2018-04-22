@@ -79,6 +79,19 @@ let get_value_opt t path f =
   | Some(v :: _) -> f v
   | None -> None
 
+let is_empty t = List.length t = 0
+
+let get_object_opt t path = 
+  get_value_opt t path (function
+    | HoconObject pairs -> Some (ConfigObject.create pairs)
+    | _ -> None
+  )
+
+let get_object t path =
+  match get_object_opt t path with
+  | Some obj -> obj
+  | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))
+
 let get_is_null t path =
   let res = get_value_opt t path (function
     | HoconNull -> Some true
