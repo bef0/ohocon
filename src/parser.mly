@@ -66,8 +66,7 @@ value:
     | TDOLLAR TLBRACE path_expr TRBRACE { $3 }
     | TINT                              { of_int $1 }
     | TSTRING                           { of_string $1 }
-    | TLBRACKET int_list TRBRACKET      { of_int_list $2 }
-    | TLBRACKET string_list TRBRACKET   { of_string_list $2 }
+    | TLBRACKET element_list TRBRACKET  { of_list $2 }
     | pair                              { $1 }
     | TLBRACE obj TRBRACE               { $2 }
     | TNULL                             { null }                    
@@ -80,11 +79,7 @@ pair:
     | path TEQ value                { make_value $1 $3 }
     | path TCOLON value             { make_value $1 $3 }
 
-int_list:
-    | TINT TCOMMA { [$1] }
-    | int_list TINT TCOMMA { $1 @ [$2] }
-
-string_list:
-    | TSTRING TCOMMA { [$1] }
-    | string_list TSTRING TCOMMA { $1 @ [$2] }
+element_list:
+    | value TCOMMA { [$1] }
+    | element_list value TCOMMA { $1 @ [$2] }
 %%

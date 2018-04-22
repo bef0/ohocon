@@ -112,8 +112,12 @@ let get_int_opt t path =
   )
 
 let get_string_list_opt t path =
+  let f acc = function
+    | HoconString e -> Option.map acc (fun es -> e :: es)
+    | _ -> None
+  in
   get_value_opt t path (function
-    | HoconStringList x -> Some x
+    | HoconArray es -> Option.map (List.fold_left f (Some []) es) List.rev
     | _ -> None
   )
 
@@ -128,8 +132,12 @@ let get_int t path =
   | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))
 
 let get_int_list_opt t path =
+  let f acc = function
+    | HoconInt n -> Option.map acc (fun es -> n :: es)
+    | _ -> None
+  in
   get_value_opt t path (function
-    | HoconIntList x -> Some x
+    | HoconArray es -> Option.map (List.fold_left f (Some []) es) List.rev
     | _ -> None
   )
 

@@ -17,8 +17,7 @@ type t =
   | HoconReference of path_expr
   | HoconString of string
   | HoconInt of int
-  | HoconStringList of string list
-  | HoconIntList of int list
+  | HoconArray of t list
   | HoconObject of (path * t) list
 
 let null = HoconNull
@@ -29,9 +28,11 @@ let of_string s = HoconString s
 
 let of_int n = HoconInt n
 
-let of_int_list ns = HoconIntList ns
+let of_list es = HoconArray es
 
-let of_string_list ss = HoconStringList ss
+let of_int_list ns = HoconArray (List.map (fun n -> HoconInt n) ns)
+
+let of_string_list ss = HoconArray (List.map (fun s -> HoconString s ) ss)
 
 let of_tuples ts = HoconObject ts
 

@@ -17,8 +17,7 @@ type t =
   | HoconReference of path_expr
   | HoconString of string
   | HoconInt of int
-  | HoconStringList of string list
-  | HoconIntList of int list
+  | HoconArray of t list
   | HoconObject of (path * t) list
 
 val null : t
@@ -28,6 +27,8 @@ val of_path_expr : path_expr -> t
 val of_string : string -> t
 
 val of_int : int -> t
+
+val of_list : t list -> t
 
 val of_int_list : int list -> t
 
