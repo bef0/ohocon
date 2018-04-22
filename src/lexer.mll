@@ -13,12 +13,9 @@ let next_line lexbuf =
 let white = [' ' '\t']
 let newline = '\r' | '\n' | "\r\n" | '\t'
 let digit = ['0'-'9']
-let ascii = ['a'-'z' 'A'-'Z']
-let lalpha = ['a'-'z']
-let ualpha = ['A'-'Z']
+let ascii = ['a'-'z' 'A'-'Z' '0'-'9']
 let integer = '-'? digit digit*
-let ident = lalpha ascii*
-let type_ident = ualpha ascii*
+let ident = ascii+
 let nano   = "ns" | "nano" | "nanos" | "nanosecond" | "nanoseconds"
 let milli  = "ms" | "milli" | "millis" | "millisecond" | "milliseconds"
 let second = "s" | "second" | "seconds"
@@ -32,6 +29,7 @@ rule read = parse
     | integer           { TINT (int_of_string(Lexing.lexeme lexbuf)) }
     | "true"            { TTRUE }
     | "false"           { TFALSE }
+    | "null"            { TNULL }
     | '.'               { TDOT }
     | ','               { TCOMMA }
     | '"'               { read_string (Buffer.create 17) lexbuf }
@@ -44,6 +42,7 @@ rule read = parse
     | ')'               { TRPAREN }
     | ':'               { TCOLON }
     | '$'               { TDOLLAR }
+    | '?'               { TQM }
     | nano              { TNANO }
     | milli             { TMILLI }
     | second            { TSECOND }

@@ -70,18 +70,26 @@ let test_get_int_list _ =
   let config = server_to_config server1 in
   assert_equal server1.s_ports (get_int_list config "server.ports")
 
+let test_resolve _ =
+  let config  = TypeSafeConfigFactory.parse_string "{ name1 = \"bar\", name2 = ${name1} }" in
+  let config' = TypeSafeConfig.resolve config in
+  assert_equal "bar" (get_string config' "name2")
+    
 let test_from_string _ =
   let config1 = TypeSafeConfigFactory.parse_string "index=1" in
   let config2 = TypeSafeConfigFactory.parse_string "person.name=\"foo\"" in
   let config3 = TypeSafeConfigFactory.parse_string "person = { age: 18 }" in
+  let config4 = TypeSafeConfigFactory.parse_string "password: null" in
   begin
     assert_equal 1 (get_int config1 "index");
     assert_equal "foo" (get_string config2 "person.name");
     assert_equal 18 (get_int config3 "person.age");
+    assert_equal None (get_string_opt config4 "password");
   end
 
 let suite = "suite" >::: [
   "test_get_config" >:: test_get_config;
+  "test_resolve" >:: test_resolve;
   "test_with_fallback" >:: test_with_fallback;
   "test_get_string" >:: test_get_string;
   "test_get_int" >:: test_get_int;

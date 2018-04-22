@@ -6,6 +6,10 @@ exception ConfigMissing of string
 
 val of_value : Hocon.t -> t
 
+val resolve : t -> t
+
+val dump : t -> unit
+
 val get_config_opt : t -> path -> t option
 
 val get_config : t -> path -> t

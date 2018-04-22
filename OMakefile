@@ -157,7 +157,7 @@
 #
 # .DEFAULT: $(OCamlProgram $(PROGRAM), $(FILES))
 
-OCAMLFLAGS    += -bin-annot -warn-error A
+OCAMLFLAGS    += -bin-annot -warn-error A -g
 
 USE_OCAMLFIND  = true
 

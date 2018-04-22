@@ -21,13 +21,19 @@ struct
     in List.rev (loop [] values)
 end
 
+let rec dump = function
+  | [] -> ()
+  | v :: vs -> begin Hocon.dump v; dump vs; end
+
 let of_value v = [v]
 
 let parse_path_fragments path = String.split_on_char '.' path
 
+let as_path frags = String.concat "." frags
+
 let compare_fragment p1 p2 = (String.compare p1 p2) = 0
 
-let get_config_opt values path =
+let get_config_opt1 values fragments =
   let rec find_first p = function
     | [] -> None
     | (p', x) :: _ when compare_fragment p p' -> Some x
@@ -46,12 +52,39 @@ let get_config_opt values path =
           end
       end
     | v :: vs' -> if (non_empty frags) then loop vs' frags else Some [v]
-  in loop values (parse_path_fragments path)
+  in loop values fragments
+
+let get_config_opt values path = get_config_opt1 values (parse_path_fragments path)
 
 let get_config t path =
   match get_config_opt t path with
   | Some x -> x
   | None -> failwith "none"
+
+let resolve1 origin =
+  let rec loop acc = function
+    | [] -> acc
+    | (HoconReference(frags, is_opt)) :: ts -> begin
+        match get_config_opt1 origin frags with
+        | Some resolved -> loop (resolved @ acc) ts
+        | None -> if is_opt then acc else
+            raise (ConfigMissing (Printf.sprintf "%s missing" (as_path frags)))
+      end
+    | HoconObject(es) :: ts -> begin
+        loop ((HoconObject (resolve_pairs es)) :: acc) ts
+      end
+    | t :: ts -> loop (t :: acc) ts
+  and resolve_pairs = function
+    | [] -> []
+    | (frag, x) :: pairs -> begin
+        match loop [] [x] with
+        | [] -> resolve_pairs pairs
+        | t :: [] -> (frag, t) :: (resolve_pairs pairs)
+        | t :: _ -> failwith "bug"
+      end
+  in loop [] origin
+
+let resolve t = List.rev (resolve1 t)
 
 let with_fallback t1 t2 = List.append t1 t2
               
