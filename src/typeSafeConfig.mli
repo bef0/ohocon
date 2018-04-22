@@ -10,6 +10,12 @@ val resolve : t -> t
 
 val dump : t -> unit
 
+val get_is_null : t -> path -> bool
+
+val get_bool : t -> path -> bool
+
+val get_bool_opt : t -> path -> bool option
+
 val get_config_opt : t -> path -> t option
 
 val get_config : t -> path -> t

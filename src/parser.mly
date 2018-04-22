@@ -16,9 +16,8 @@ let merge_values a =
 
 %}
 
-%token TTRUE TFALSE
 %token TSEMI TCOLON
-%token TBOOL
+%token <bool> TBOOL
 %token TCOMMA
 %token TDOT
 %token TDOLLAR
@@ -64,6 +63,7 @@ path_expr1:
 
 value:
     | TDOLLAR TLBRACE path_expr TRBRACE { $3 }
+    | TBOOL                             { of_bool $1 }
     | TINT                              { of_int $1 }
     | TSTRING                           { of_string $1 }
     | TLBRACKET element_list TRBRACKET  { of_list $2 }

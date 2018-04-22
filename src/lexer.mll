@@ -27,8 +27,8 @@ rule read = parse
     | white             { read lexbuf }
     | newline           { next_line lexbuf; read lexbuf }
     | integer           { TINT (int_of_string(Lexing.lexeme lexbuf)) }
-    | "true"            { TTRUE }
-    | "false"           { TFALSE }
+    | "true"            { TBOOL true }
+    | "false"           { TBOOL false }
     | "null"            { TNULL }
     | '.'               { TDOT }
     | ','               { TCOMMA }

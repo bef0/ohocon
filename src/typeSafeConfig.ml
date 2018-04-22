@@ -6,21 +6,6 @@ type t = Hocon.t list
   
 exception ConfigMissing of string
 
-module Option =
-struct
-  let map x f = match x with
-    | Some v -> Some (f v)
-    | None -> None
-      
-  let flatten values =
-    let rec loop acc xs =
-      match xs with
-      | [] -> acc
-      | (Some x) :: xs' -> loop (x :: acc) xs'
-      | None :: xs'   -> loop acc xs'
-    in List.rev (loop [] values)
-end
-
 let rec dump = function
   | [] -> ()
   | v :: vs -> begin Hocon.dump v; dump vs; end
@@ -87,12 +72,30 @@ let resolve1 origin =
 let resolve t = List.rev (resolve1 t)
 
 let with_fallback t1 t2 = List.append t1 t2
-              
+
 let get_value_opt t path f =
   match get_config_opt t path with
   | Some([]) -> None
   | Some(v :: _) -> f v
   | None -> None
+
+let get_is_null t path =
+  let res = get_value_opt t path (function
+    | HoconNull -> Some true
+    | _ -> None
+  )
+  in Option.fold res (Lazy.from_val false) Function.identity
+
+let get_bool_opt t path =
+  get_value_opt t path (function
+    | HoconBool b -> Some b
+    | _ -> None
+  )
+
+let get_bool t path =
+  match get_bool_opt t path with
+  | Some b -> b
+  | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))
     
 let get_string_opt t path =
   get_value_opt t path (function

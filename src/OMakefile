@@ -1,6 +1,8 @@
 OCamlGeneratedFiles(parser.ml lexer.ml)
 
 OHOCON_FILES[] =
+	function
+	option
 	lexer
 	parser
 	hocon

@@ -70,6 +70,22 @@ let test_get_int_list _ =
   let config = server_to_config server1 in
   assert_equal server1.s_ports (get_int_list config "server.ports")
 
+let test_get_is_null _ =
+  let config = TypeSafeConfigFactory.parse_string "{ var1 = null, var2 = 3 }" in
+  begin
+    assert_equal true (get_is_null config "var1");
+    assert_equal false (get_is_null config "var2");
+  end
+
+let test_get_bool _ =
+  let config = TypeSafeConfigFactory.parse_string "{ var1 = true, var2 = false }" in
+  begin
+    assert_equal (Some true) (get_bool_opt config "var1");
+    assert_equal (Some false) (get_bool_opt config "var2");
+    assert_equal true (get_bool config "var1");
+    assert_equal false (get_bool config "var2");
+  end
+
 let test_resolve _ =
   let config  = TypeSafeConfigFactory.parse_string "{ name1 = \"bar\", name2 = ${name1} }" in
   let config' = TypeSafeConfig.resolve config in
@@ -95,6 +111,8 @@ let suite = "suite" >::: [
   "test_get_int" >:: test_get_int;
   "test_get_string_list" >:: test_get_string_list;
   "test_get_int_list" >:: test_get_int_list;
+  "test_get_is_null" >:: test_get_is_null;
+  "test_get_bool" >:: test_get_bool;
   "test_from_string" >:: test_from_string;
 ]
 

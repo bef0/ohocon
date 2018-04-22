@@ -14,6 +14,7 @@ type duration = int64 * duration_unit
   
 type t =
   | HoconNull
+  | HoconBool of bool
   | HoconReference of path_expr
   | HoconString of string
   | HoconInt of int
@@ -21,6 +22,8 @@ type t =
   | HoconObject of (path * t) list
 
 val null : t
+
+val of_bool : bool -> t
 
 val of_path_expr : path_expr -> t
 
