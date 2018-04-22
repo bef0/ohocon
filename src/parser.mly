@@ -1,7 +1,5 @@
 %{
-module C = TypeSafeConfig
 open Hocon
-open Lexing
 
 let fixup_path frags = List.filter (fun e -> e <> "") frags
 
@@ -34,54 +32,52 @@ let merge_values a =
 %token <string> TIDENT
 %token TEOF
 
-%start document
-%type <TypeSafeConfig.t> document
-
-%nonassoc TSEMI
-%left TCOMMA
-%left TCOLON
-%nonassoc TEQ
-%left TDOT
-%left prec_app
-%nonassoc TQM
+%start <TypeSafeConfig.t> document
 
 %%
 document:
-    |       { C.of_value HoconNull }
-    | value { C.of_value $1 }
+    | (* empty *) { TypeSafeConfig.of_value HoconNull }
+    | v = value   { TypeSafeConfig.of_value v }
+    ;
         
 path:
-    | TIDENT           { fixup_path [ $1 ] }
-    | path TDOT TIDENT { fixup_path ($1 @ [$3]) }
+    | p = TIDENT                  { fixup_path [ p ] }
+    | ps = path; TDOT; p = TIDENT { fixup_path (ps @ [p]) }
+    ;
 
 path_expr:
-    | path_expr1       { of_path_expr ($1, false) }
-    | TQM path_expr1   { of_path_expr ($2, true) }
+    | ps = path_expr1       { of_path_expr (ps, false) }
+    | TQM; ps = path_expr1  { of_path_expr (ps, true) }
+    ;
 
 path_expr1:
-    | TIDENT                 { fixup_path [ $1 ] }
-    | path_expr1 TDOT TIDENT { fixup_path ($1 @ [$3]) }
+    | p = TIDENT                         { fixup_path [ p ] }
+    | ps = path_expr1; TDOT; p = TIDENT; { fixup_path (ps @ [p]) }
+    ;
 
 value:
-    | TDOLLAR TLBRACE path_expr TRBRACE { $3 }
-    | TBOOL                             { of_bool $1 }
-    | TINT                              { of_int $1 }
-    | TFLOAT                            { of_float $1 }
-    | TSTRING                           { of_string $1 }
-    | TLBRACKET element_list TRBRACKET  { of_list $2 }
-    | pair                              { $1 }
-    | TLBRACE obj TRBRACE               { $2 }
-    | TNULL                             { null }                    
+    | TDOLLAR; TLBRACE; v = path_expr; TRBRACE { v }
+    | v = TBOOL                                { of_bool v }
+    | v = TINT                                 { of_int v }
+    | v = TFLOAT                               { of_float v }
+    | v = TSTRING                              { of_string v }
+    | TLBRACKET; v = element_list; TRBRACKET   { of_list v }
+    | v = pair                                 { v }
+    | TLBRACE; v = obj; TRBRACE                { v }
+    | TNULL                                    { null }
+    ;
 
 obj:
-    | pair                    { $1 }
-    | obj  TCOMMA pair        { merge_values ($1, $3) }
+    | p = pair                    { p }
+    | ps = obj; TCOMMA; p = pair  { merge_values (p, ps) }
+    ;
 
 pair:
-    | path TEQ value                { make_value $1 $3 }
-    | path TCOLON value             { make_value $1 $3 }
+    | p = path; TEQ; v = value      { make_value p v }
+    | p = path; TCOLON; v = value   { make_value p v }
+    ;
 
 element_list:
-    | value TCOMMA { [$1] }
-    | element_list value TCOMMA { $1 @ [$2] }
-%%
+    | v = value; TCOMMA { [v] }
+    | vs = element_list; v = value; TCOMMA { vs @ [v] }
+    ;

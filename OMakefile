@@ -161,6 +161,8 @@ OCAMLFLAGS    += -bin-annot -warn-error A -g
 
 USE_OCAMLFIND  = true
 
+MENHIR_ENABLED = true
+
 NATIVE_ENABLED = true
 
 BYTE_ENABLED = true

@@ -2,8 +2,10 @@ OCAMLINCLUDES += ../src
 
 OCAML_LIBS += ../src/libohocon
 
-OCAMLPACKS[] =
+OCAMLPACKS[] +=
 	oUnit
+	ulex
+	menhirLib
 
 TEST_FILES[] =
 	testTypes

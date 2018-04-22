@@ -1,3 +1,13 @@
+MENHIR_FLAGS += --infer --explain
+
+OCAMLPACKS[] +=
+	ulex
+	menhirLib
+
+section
+	OCAMLFINDFLAGS += -syntax camlp4o
+	ulexer.o ulexer.cmt ulexer.cmx ulexer.cmo ulexer.cmi:
+
 OCamlGeneratedFiles(parser.ml lexer.ml)
 
 OHOCON_FILES[] =
@@ -10,7 +20,7 @@ OHOCON_FILES[] =
 	typeSafeConfig
 	typeSafeConfigFactory
 
-.DEFAULT: $(OCamlLibrary libohocon, $(OHOCON_FILES))
+.DEFAULT: $(OCamlLibrary libohocon, $(OHOCON_FILES) ulexer)
 
 clean:
 	rm -f \
