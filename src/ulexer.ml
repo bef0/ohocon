@@ -1,5 +1,6 @@
 open Parser
 open Hocon
+open Stdint
 
 module U = Ulexing
 
@@ -16,13 +17,30 @@ let regexp frac = '.' digits
 let regexp exp = ['e' 'E'] ['+' '-']? digits
 let regexp float = integer frac | integer exp | integer frac exp
 let regexp ident = ascii+
-let regexp nano   = "ns" | "nano" | "nanos" | "nanosecond" | "nanoseconds"
-let regexp milli  = "ms" | "milli" | "millis" | "millisecond" | "milliseconds"
-let regexp second = "s" | "second" | "seconds"
-let regexp minute = "m" | "minute" | "minutes"
-let regexp hour   = "h" | "hour" | "hours"
-let regexp day    = "d" | "day" | "days"
+let regexp duration = digit1to9 digit*
+let regexp nano   = duration ("ns" | "nano" | "nanos" | "nanosecond" | "nanoseconds")
+let regexp milli  = duration ("ms" | "milli" | "millis" | "millisecond" | "milliseconds")
+let regexp second = duration ("s" | "second" | "seconds")
+let regexp minute = duration ("m" | "minute" | "minutes")
+let regexp hour   = duration ("h" | "hour" | "hours")
+let regexp day    = duration ("d" | "day" | "days")
 
+let take_while_digit str =
+  let rec find_non_digit_pos n m =
+    if m > 0 then
+      match String.get str n with
+      | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9' ->
+        find_non_digit_pos (1 + n) (m - 1)
+      | _ -> n
+    else n
+  in
+  let pos = find_non_digit_pos 0 (String.length str) in
+  String.sub str 0 pos
+
+let parse_duration str dunit =
+  let digits = take_while_digit str in
+  Duration.create (Uint64.of_string digits) dunit
+    
 let new_pos fname = {
   Lexing.pos_fname = fname;
   Lexing.pos_lnum  = 1;
@@ -64,12 +82,12 @@ let rec read pos =
   | ':'     -> eat pos (Ulexing.lexeme_length lexbuf), TCOLON
   | '$'     -> eat pos (Ulexing.lexeme_length lexbuf), TDOLLAR
   | '?'     -> eat pos (Ulexing.lexeme_length lexbuf), TQM
-  | nano    -> eat pos (Ulexing.lexeme_length lexbuf), TNANO
-  | milli   -> eat pos (Ulexing.lexeme_length lexbuf), TMILLI
-  | second  -> eat pos (Ulexing.lexeme_length lexbuf), TSECOND
-  | minute  -> eat pos (Ulexing.lexeme_length lexbuf), TMINUTE
-  | hour    -> eat pos (Ulexing.lexeme_length lexbuf), THOUR
-  | day     -> eat pos (Ulexing.lexeme_length lexbuf), TDAY
+  | nano    -> eat pos (Ulexing.lexeme_length lexbuf), TNANO (parse_duration (Ulexing.utf8_lexeme lexbuf) Duration.Nano)
+  | milli   -> eat pos (Ulexing.lexeme_length lexbuf), TMILLI (parse_duration (Ulexing.utf8_lexeme lexbuf) Duration.Milli)
+  | second  -> eat pos (Ulexing.lexeme_length lexbuf), TSECOND (parse_duration (Ulexing.utf8_lexeme lexbuf) Duration.Second)
+  | minute  -> eat pos (Ulexing.lexeme_length lexbuf), TMINUTE (parse_duration (Ulexing.utf8_lexeme lexbuf) Duration.Minute)
+  | hour    -> eat pos (Ulexing.lexeme_length lexbuf), THOUR (parse_duration (Ulexing.utf8_lexeme lexbuf) Duration.Hour)
+  | day     -> eat pos (Ulexing.lexeme_length lexbuf), TDAY (parse_duration (Ulexing.utf8_lexeme lexbuf) Duration.Day)
   | ident   -> eat pos (Ulexing.lexeme_length lexbuf), TIDENT (Ulexing.utf8_lexeme lexbuf)
   | eof     -> eat pos (Ulexing.lexeme_length lexbuf), TEOF
   | _       -> raise (SyntaxError ("Unexpected char: " ^ Ulexing.utf8_lexeme lexbuf))

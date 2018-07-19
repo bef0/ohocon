@@ -2,16 +2,6 @@ type path = string
 
 type path_expr = string list * bool
 
-type duration_unit =
-  | Nano
-  | Milli
-  | Second
-  | Minute
-  | Hour
-  | Day
-
-type duration = int64 * duration_unit
-  
 type t =
   | HoconNull
   | HoconBool of bool
@@ -20,6 +10,7 @@ type t =
   | HoconInt of int
   | HoconFloat of float
   | HoconArray of t list
+  | HoconDuration of Duration.t
   | HoconObject of (path * t) list
 
 let null = HoconNull
@@ -41,6 +32,8 @@ let of_int_list ns = HoconArray (List.map (fun n -> HoconInt n) ns)
 let of_string_list ss = HoconArray (List.map (fun s -> HoconString s ) ss)
 
 let of_tuples ts = HoconObject ts
+
+let of_duration duration = HoconDuration duration
 
 let rec dump = function
   | HoconObject pairs -> begin

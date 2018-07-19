@@ -23,7 +23,7 @@ let merge_values a =
 %token TEQ
 %token TQM
 %token TNULL
-%token TNANO TMILLI TSECOND TMINUTE THOUR TDAY
+%token <Duration.t> TNANO TMILLI TSECOND TMINUTE THOUR TDAY
 %token TLPAREN TRPAREN
 %token TLBRACE TRBRACE
 %token TLBRACKET TRBRACKET
@@ -57,6 +57,7 @@ path_expr1:
 
 value:
     | TDOLLAR; TLBRACE; v = path_expr; TRBRACE { v }
+    | v = duration                             { of_duration v }
     | v = TBOOL                                { of_bool v }
     | v = TINT                                 { of_int v }
     | v = TFLOAT                               { of_float v }
@@ -80,4 +81,13 @@ pair:
 element_list:
     | v = value; TCOMMA { [v] }
     | vs = element_list; v = value; TCOMMA { vs @ [v] }
+    ;
+
+duration:
+    | v = TNANO    { v }
+    | v = TMILLI   { v }
+    | v = TSECOND  { v }
+    | v = TMINUTE  { v }
+    | v = THOUR    { v }
+    | v = TDAY     { v }
     ;

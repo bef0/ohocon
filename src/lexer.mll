@@ -49,12 +49,12 @@ rule read = parse
     | ':'               { TCOLON }
     | '$'               { TDOLLAR }
     | '?'               { TQM }
-    | nano              { TNANO }
-    | milli             { TMILLI }
-    | second            { TSECOND }
-    | minute            { TMINUTE }
-    | hour              { THOUR }
-    | day               { TDAY }
+    | nano              { TNANO Duration.zero }
+    | milli             { TMILLI Duration.zero }
+    | second            { TSECOND Duration.zero }
+    | minute            { TMINUTE Duration.zero }
+    | hour              { THOUR Duration.zero }
+    | day               { TDAY Duration.zero }
     | ident             { TIDENT (Lexing.lexeme lexbuf) }
     | eof               { TEOF }
     | _

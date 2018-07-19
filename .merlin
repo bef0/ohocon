@@ -3,3 +3,4 @@ B test
 PKG oUnit
 PKG menhirlib
 PKG ulex
+PKG stdint

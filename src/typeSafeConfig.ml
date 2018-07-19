@@ -172,3 +172,29 @@ let get_int_list t path =
   match get_int_list_opt t path with
   | Some x -> x
   | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))
+
+let get_duration_opt t path =
+  get_value_opt t path (function
+    | HoconDuration x -> Some x
+    | _ -> None
+  )
+
+let get_duration t path =
+  match get_duration_opt t path with
+  | Some x -> x
+  | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))
+
+let get_duration_list_opt t path =
+  let f acc = function
+    | HoconDuration n -> Option.map acc (fun es -> n :: es)
+    | _ -> None
+  in
+  get_value_opt t path (function
+    | HoconArray es -> Option.map (List.fold_left f (Some []) es) List.rev
+    | _ -> None
+  )
+
+let get_duration_list t path =
+  match get_duration_list_opt t path with
+  | Some x -> x
+  | None -> raise (ConfigMissing (Printf.sprintf "%s missing" path))

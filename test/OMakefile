@@ -6,14 +6,17 @@ OCAMLPACKS[] +=
 	oUnit
 	ulex
 	menhirLib
+	stdint
 
 TEST_FILES[] =
 	testTypes
+	durationSuite
 	getBoolSuite
 	getFloatSuite
 	getIntSuite
 	getStringSuite
 	getObjectSuite
+	getDurationSuite
 	typeSafeConfigSuite
 	typeSafeConfigFactorySuite
 	main

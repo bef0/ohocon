@@ -47,3 +47,11 @@ val get_int : t -> path -> int
 val get_int_list_opt : t -> string -> int list option
 
 val get_int_list : t -> string -> int list
+
+val get_duration_opt : t -> path -> Duration.t option
+
+val get_duration : t -> path -> Duration.t
+
+val get_duration_list : t -> path -> Duration.t list
+                                       
+val get_duration_list_opt : t -> path -> Duration.t list option

@@ -3,6 +3,7 @@ MENHIR_FLAGS += --infer --explain
 OCAMLPACKS[] +=
 	ulex
 	menhirLib
+	stdint
 
 section
 	OCAMLFINDFLAGS += -syntax camlp4o
@@ -13,6 +14,7 @@ OCamlGeneratedFiles(parser.ml lexer.ml)
 OHOCON_FILES[] =
 	function
 	option
+	duration
 	lexer
 	parser
 	hocon
