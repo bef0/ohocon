@@ -49,3 +49,34 @@ let _ = TypeSafeConfig.get_int_opt "id"
 (* get a list of int. *)
 let _ = TypeSafeConfig.get_int_list "follower_ids"
 ```
+
+# TODO
+
+Items                                              | Status
+---------------------------------------------------| :-----:
+Comments                                           | :x:
+Omit root braces                                   | :x:
+Key-value separator                                | :x:
+Commas                                             | :x:
+Whitespace                                         | :x:
+Duplicate keys and object merging                  | :x:
+Unquoted strings                                   | :x:
+Multi-line strings                                 | :x:
+String value concatenation                         | :x:
+Array concatenation                                | :x:
+Object concatenation                               | :x:
+Arrays without commas                              | :x:
+Path expressions                                   | :x:
+Paths as keys                                      | :x:
+Substitutions                                      | :x:
+Self-referential substitutions                     | :x:
+The `+=` separator                                 | :x:
+Includes                                           | :x:
+Include semantics: merging                         | :x:
+Include semantics: substitution                    | :x:
+Include semantics: missing files                   | :x:
+Include semantics: file formats and extensions     | :x:
+Include semantics: locating resources              | :x:
+Include semantics: preventing cycles               | :x:
+Conversion of numerically-index objects to arrays  | :x:
+
