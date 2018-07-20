@@ -14,6 +14,9 @@ open OHocon
 
 (* load from a string *)
 let config = TypeSafeConfigFactory.parse_string "{name:\"john\"}"
+
+(* load from a file *)
+let config = TypeSafeConfigFactory.parse_file "/tmp/application.conf"
 ```
 
 ## string

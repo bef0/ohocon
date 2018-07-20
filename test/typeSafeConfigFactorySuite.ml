@@ -3,6 +3,11 @@ open OUnit2
 open TestTypes
 open Stdint
 
+module B = Base
+
+let open_temp_file () =
+  Filename.open_temp_file ~mode:[Open_creat; Open_wronly;] ~perms:0o640 "ohocon" "ohocon"
+
 let test_from_string _ =
   let config1 = TypeSafeConfigFactory.parse_string "index=1" in
   let config2 = TypeSafeConfigFactory.parse_string "person.name=\"foo\"" in
@@ -56,6 +61,14 @@ let test_day_from_string _ =
   List.iter (fun c ->
     assert_equal (Duration.of_day Uint64.one) (get_duration c "interval")
   ) [c1; c2]
+
+let test_parse_file _ =
+  let (path, chan) = open_temp_file () in
+  let _ = B.write_all chan "{name: \"foo\", interval=1day}" in
+  let config = TypeSafeConfigFactory.parse_file path in
+  begin
+    assert_equal "foo" (TypeSafeConfig.get_string config "name");
+  end
   
 let suite = "TypeSafeConfigFactorySuite" >::: [
   "test_from_string" >:: test_from_string;
@@ -65,4 +78,5 @@ let suite = "TypeSafeConfigFactorySuite" >::: [
   "test_minute_from_string" >:: test_minute_from_string;
   "test_hour_from_string" >:: test_hour_from_string;
   "test_day_from_string" >:: test_day_from_string;
+  "test_parse_file" >:: test_parse_file;
 ]

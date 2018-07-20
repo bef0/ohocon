@@ -12,6 +12,9 @@ section
 OCamlGeneratedFiles(parser.ml lexer.ml)
 
 OHOCON_FILES[] =
+	base
+	cont
+	try
 	function
 	option
 	duration
